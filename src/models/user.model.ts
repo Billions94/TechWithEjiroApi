@@ -1,8 +1,28 @@
-import mongoose from "mongoose"
-import { UserDocument, UserModel } from "./interfaces"
+import mongoose, { Document, Model } from "mongoose"
 import bcrypt from 'bcrypt'
 
 const { Schema, model } = mongoose
+
+
+export interface UserDocument extends Document {
+    name: string
+    username: string
+    email: string
+    password: string
+    image: string
+    isAdmin: boolean
+    refreshToken: string
+    createdAt: Date
+    updatedAt: Date
+    _doc?: {
+        _id: string
+    }
+    session?: string
+}
+
+export interface UserModel extends Model<UserDocument> {
+    verifyCredentials(email: string, password: string): Promise<UserDocument & Document | null>;
+}
 
 
 const UserSchema = new Schema<UserDocument>(
@@ -57,7 +77,7 @@ UserSchema.pre('save', async function (next) {
 })
 
 UserSchema.methods.toJSON = function () {
-    const userDoc = this
+    const userDoc = this as UserDocument
     const userObject = userDoc.toObject()
     
     delete userObject.password

@@ -1,8 +1,16 @@
-import mongoose from "mongoose"
-import { PostDocument } from "./interfaces"
+import mongoose, { Document } from 'mongoose'
+import { UserDocument } from "./user.model"
+
+export interface PostDocument extends Document {
+    user: UserDocument['_id']
+    title: string
+    content: string
+    image: string
+    createdAt: Date
+    updatedAt: Date
+}
 
 const { Schema, model } = mongoose
-
 
 const PostSchema = new Schema<PostDocument>(
     {
@@ -29,7 +37,7 @@ const PostSchema = new Schema<PostDocument>(
 )
 
 PostSchema.methods.toJSON = function () {
-    const postDoc = this
+    const postDoc = this as PostDocument
     const postObject = postDoc.toObject()
 
     delete postObject.__v

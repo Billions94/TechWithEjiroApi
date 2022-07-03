@@ -1,6 +1,5 @@
 import { DocumentDefinition, FilterQuery } from 'mongoose'
-import { UserDocument } from '../models/interfaces';
-import User from '../models/user.model';
+import User, { UserDocument } from '../models/user.model';
 import bcrypt from 'bcrypt'
 
 export const createUser = async (input: DocumentDefinition<Omit<UserDocument,'name' | 'createdAt' | 'updatedAt' | 'refreshToken' | 'isAdmin' | 'image'>>) => {

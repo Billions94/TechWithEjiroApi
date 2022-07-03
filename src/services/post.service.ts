@@ -1,6 +1,5 @@
-import { FilterQuery, UpdateQuery, QueryOptions, DocumentDefinition } from "mongoose"
-import { PostDocument } from "../models/interfaces"
-import Post from "../models/post.model"
+import { FilterQuery, UpdateQuery, QueryOptions, DocumentDefinition } from 'mongoose'
+import Post, { PostDocument } from '../models/post.model'
 
 
 export const createPost = async (input: DocumentDefinition<Omit<PostDocument, 'createdAt' | 'updatedAt' | 'image'>>) => {

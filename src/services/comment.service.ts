@@ -36,14 +36,14 @@ export const findComment = async (query: FilterQuery<CommentDocument>, options: 
     }
 }
 
-// export const findAndUpdateComment = async (query: FilterQuery<CommentDocument>, update: UpdateQuery<CommentDocument>, options: QueryOptions) => {
-//     return Comment.findOneAndUpdate(query, update, options)
-// }
+export const findAndUpdateComment = async (query: FilterQuery<CommentDocument>, update: UpdateQuery<CommentDocument>, options: QueryOptions) => {
+    return Comment.findOneAndUpdate(query, update, options)
+}
 
 export const deleteMany = async (query: FilterQuery<CommentDocument>) => {
     return Comment.deleteMany(query)
 }
 
-// export const deleteComment = async (query: FilterQuery<CommentDocument>) => {
-//     return Comment.deleteOne(query)
-// }
+export const deleteComment = async (query: FilterQuery<CommentDocument>) => {
+    return Comment.deleteOne(query)
+}

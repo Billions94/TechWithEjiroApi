@@ -20,4 +20,29 @@ export const createUserSchema = object({
     })
 })
 
+const payload = {
+    body: object({
+        username: string({
+            required_error: 'Username is required'
+        }),
+        email: string({
+            required_error: 'Email is required'
+        })
+    })
+}
+
+const params = {
+    params: object({
+        userId: string({
+            required_error: "userId is required",
+        }),
+    }),
+}
+
+export const updateUserSchema = object({
+    ...payload,
+    ...params,
+})
+
 export type CreateUserInput = Omit<TypeOf<typeof createUserSchema>, 'body.passwordConfirmation'>
+export type UpdateUserInput = TypeOf<typeof updateUserSchema>

@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express'
-import { CreateUserInput } from '../schemas/user.schema'
-import { createUser, getUsers } from '../services/user.service'
+import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema'
+import { createUser, deleteUser, findUser, getUsers } from '../services/user.service'
 import logger from '../utils/logger'
 
-const createUserHandler: RequestHandler<{}, {}, CreateUserInput['body']> = async (req, res) => {
+const createUserHandler: RequestHandler = async (req, res) => {
     try {
         const user = await createUser(req.body) // call create user service
         return res.status(201).send({
@@ -32,7 +32,44 @@ const getUserHandler: RequestHandler = async (req, res) => {
     }
 }
 
+const findUserHandler: RequestHandler<UpdateUserInput["params"]> = async (req, res) => {
+    try {
+        const userId = req.params.userId
+
+        const user = await findUser({ userId })
+
+        if (user?._id.toString() !== userId) return res.send({ message: 'User not found' })
+
+        return res.send({ user })
+    } catch (error: any) {
+        logger.error(error)
+        return res.status(409).send({
+            message: `Error finding user: ${error.message}`,
+        })
+    }
+}
+
+// const deleteUserHandler: RequestHandler<UpdateUserInput['params']> = async (req, res) => {
+//     try {
+//         const userId = req.params.userId
+
+//         const user = await findUser({ userId })
+
+//         const allPost = user.posts.find((post: PostDocument) => )
+
+//         await deleteUser({ userId })
+
+//     } catch (error: any) {
+//         logger.error(error)
+//         return res.status(409).send({
+//             message: `Error finding user: ${error.message}`,
+//         })
+//     }
+// }
+
+
 export const userHandler = {
     createUserHandler,
     getUserHandler,
+    findUserHandler
 }

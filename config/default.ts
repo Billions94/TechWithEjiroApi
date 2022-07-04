@@ -8,4 +8,7 @@ export default {
   accessTokenPublicKey: ``,
   refreshTokenPrivateKey: ``,
   refreshTokenPublicKey: ``,
+  cloudName: ``,
+  apiKey: ``,
+  apiSecret: ``,
 };

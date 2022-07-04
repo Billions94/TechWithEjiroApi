@@ -6,28 +6,21 @@ import { verifyJwt, signJwt } from '../utils/jwt.utils'
 import { findUser } from './user.service'
 
 
-export async function createSession(userId: string, userAgent: string) {
+export const createSession = async (userId: string, userAgent: string) => {
   const session = await Session.create({ user: userId, userAgent })
 
   return session.toJSON()
 }
 
-export async function findSessions(query: FilterQuery<SessionDocument>) {
+export const findSessions = async (query: FilterQuery<SessionDocument>) => {
   return Session.find(query).lean()
 }
 
-export async function updateSession(
-  query: FilterQuery<SessionDocument>,
-  update: UpdateQuery<SessionDocument>
-) {
+export const updateSession = async (query: FilterQuery<SessionDocument>, update: UpdateQuery<SessionDocument>) =>  {
   return Session.updateOne(query, update)
 }
 
-export async function reIssueAccessToken({
-  refreshToken,
-}: {
-  refreshToken: string
-}) {
+export const reIssueAccessToken = async ({ refreshToken }: { refreshToken: string }) => {
   const { decoded } = verifyJwt(refreshToken, "refreshTokenPublicKey")
 
   if (!decoded || !get(decoded, "session")) return false

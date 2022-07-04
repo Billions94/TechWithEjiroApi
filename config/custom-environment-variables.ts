@@ -5,4 +5,7 @@ export default {
   refreshTokenPublicKey: "REFRESH_PUBLIC_KEY",
   dbUri: "DB_CONNECTION",
   port: "PORT",
+  cloudName: "CLOUD_NAME",
+  apiKey: "API_KEY",
+  apiSecret: "API_SECRET",
 };

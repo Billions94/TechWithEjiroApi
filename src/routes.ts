@@ -8,14 +8,17 @@ import validateResources from './middleware/validateResources'
 import { createPostSchema, updatePostSchema, getPostSchema, deletePostSchema } from './schemas/post.schema'
 import { sessionSchema } from './schemas/session.schema'
 import { createUserSchema } from './schemas/user.schema'
-import { createCommentSchema, getCommentSchema, updateCommentSchema } from './schemas/comment.schema'
+import { createCommentSchema, deleteCommentSchema, getCommentSchema, updateCommentSchema } from './schemas/comment.schema'
 
 export default function Routes(app: Express) {
 
     // User Routes
-    app.post('/api/users', validateResources(createUserSchema), userHandler.createUserHandler)
+    app.route('/api/users')
+        .post(validateResources(createUserSchema), userHandler.createUserHandler)
+        .get(userHandler.getUserHandler)
 
-    app.get('/api/users', userHandler.getUserHandler)
+    app.route('/api/users/:userId')
+        .get(userHandler.findUserHandler)
 
     // Session Routes
     app.route('/api/sessions')
@@ -39,9 +42,9 @@ export default function Routes(app: Express) {
     // Comments Routes
     app.post("/api/comments/:postId", [requireUser, validateResources(createCommentSchema)], commentHandler.createCommentHandler)
 
-    app.route("api/comments/:commentId")
-    
-    app.get("/api/comments/:commentId", commentHandler.getCommentHandler)
-
+    app.route("/api/comments/:commentId")
+        .get(validateResources(getCommentSchema), commentHandler.getCommentHandler)
+        .put([requireUser, validateResources(updateCommentSchema)], commentHandler.updateCommentHandler)
+        .delete([requireUser, validateResources(deleteCommentSchema)], commentHandler.deleteCommentHandler)
 
 }

@@ -1,16 +1,18 @@
 import mongoose, { Document, Model } from "mongoose"
 import bcrypt from 'bcrypt'
+import { PostDocument } from "./post.model"
 
 const { Schema, model } = mongoose
 
 
 export interface UserDocument extends Document {
-    name: string
+    firstName: string
+    lastName: string
     username: string
     email: string
     password: string
     image: string
-    isAdmin: boolean
+    posts: PostDocument['_id']
     refreshToken: string
     createdAt: Date
     updatedAt: Date
@@ -27,7 +29,12 @@ export interface UserModel extends Model<UserDocument> {
 
 const UserSchema = new Schema<UserDocument>(
     {
-        name: {
+        firstName: {
+            type: String,
+            required: false,
+            maxlength: [30, 'Name must be lesst 30 characters']
+        },
+        lastName: {
             type: String,
             required: false,
             maxlength: [30, 'Name must be lesst 30 characters']
@@ -50,11 +57,10 @@ const UserSchema = new Schema<UserDocument>(
         image: {
             type: String,
         },
-        isAdmin: {
-            type: Boolean,
-            default: false,
-            enum: ['true', 'false']
-        },
+        posts: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Post'
+        }],
         refreshToken: {
             type: String,
         }
@@ -79,7 +85,7 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.toJSON = function () {
     const userDoc = this as UserDocument
     const userObject = userDoc.toObject()
-    
+
     delete userObject.password
     delete userObject.__v
     delete userObject.refreshToken

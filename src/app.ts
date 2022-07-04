@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 import config from 'config'
 
-const PORT = config.get<number>("port");
+const PORT = config.get<number>("port")
 
 const app = express()
 

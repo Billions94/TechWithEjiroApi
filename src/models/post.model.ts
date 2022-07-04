@@ -1,4 +1,5 @@
 import mongoose, { Document } from 'mongoose'
+import { CommentDocument } from './comments.model'
 import { UserDocument } from "./user.model"
 
 export interface PostDocument extends Document {
@@ -6,6 +7,7 @@ export interface PostDocument extends Document {
     title: string
     content: string
     image: string
+    comments: CommentDocument['_id']
     createdAt: Date
     updatedAt: Date
 }
@@ -29,7 +31,13 @@ const PostSchema = new Schema<PostDocument>(
         },
         image: {
             type: String
-        }
+        },
+        comments: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Comment'
+            }
+        ]
     },
     {
         timestamps: true,

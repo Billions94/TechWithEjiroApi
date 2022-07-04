@@ -15,7 +15,7 @@ const payload = {
 const params = {
     params: object({
         postId: string({
-            required_error: "productId is required",
+            required_error: "postId is required",
         }),
     }),
 }
@@ -38,6 +38,6 @@ export const deletePostSchema = object({
 })
 
 export type CreatePostInput = TypeOf<typeof createPostSchema>
-export type UpdatePostInput = TypeOf<typeof updatePostSchema>
 export type ReadPostInput = TypeOf<typeof getPostSchema>
+export type UpdatePostInput = TypeOf<typeof updatePostSchema>
 export type DeletePostInput = TypeOf<typeof deletePostSchema>

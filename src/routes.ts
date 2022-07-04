@@ -1,10 +1,12 @@
-import { Express, RequestHandler } from 'express'
+import { Express } from 'express'
+import { createCommentHandler, deleteCommentHandler, getCommentHandler, updateCommentHandler } from './controllers/comment.controller'
 import { createPostHandler, deletePostHandler, updatePostHandler, getPostHandler } from './controllers/post.controller'
 import { createUserSessionHandler, deleteSessionHandler, getUserSessionsHandler } from './controllers/session.controller'
 import { createUserHandler, getUserHandler } from './controllers/user.controller'
 import requireUser from './middleware/requireUser'
 import validateResources from './middleware/validateResources'
 import { createPostSchema, updatePostSchema, getPostSchema, deletePostSchema } from './schemas/post.schema'
+import { createCommentSchema, updateCommentSchema, getCommentSchema, deleteCommentSchema } from './schemas/comment.schema'
 import { sessionSchema } from './schemas/session.schema'
 import { createUserSchema } from './schemas/user.schema'
 
@@ -16,11 +18,11 @@ export default function Routes(app: Express) {
     app.get('/api/users', getUserHandler)
 
     // Session Routes
-    app.post('/api/sessions', validateResources(sessionSchema), createUserSessionHandler)
+    app.route('/api/sessions')
+        .post(validateResources(sessionSchema), createUserSessionHandler)
+        .get(requireUser, getUserSessionsHandler)
+        .delete(requireUser, deleteSessionHandler)
 
-    app.get('/api/sessions', requireUser, getUserSessionsHandler)
-
-    app.delete('/api/sessions', requireUser, deleteSessionHandler)
 
     // Posts Routes
     app.post(
@@ -29,22 +31,17 @@ export default function Routes(app: Express) {
         createPostHandler
     )
 
-    app.put(
-        "/api/posts/:postId",
-        [requireUser, validateResources(updatePostSchema)],
-        updatePostHandler
-    )
+    app.route("/api/posts/:postId")
+        .get(validateResources(getPostSchema), getPostHandler)
+        .put([requireUser, validateResources(updatePostSchema)], updatePostHandler)
+        .delete([requireUser, validateResources(deletePostSchema)], deletePostHandler)
 
-    app.get(
-        "/api/posts/:postId",
-        validateResources(getPostSchema),
-        getPostHandler
-    )
+    // Comments Routes
+    app.post("/api/comments/:postId", requireUser, createCommentHandler)
 
-    app.delete(
-        "/api/posts/:postId",
-        [requireUser, validateResources(deletePostSchema)],
-        deletePostHandler
-    )
+    app.route("api/comments/:commentId")
+        .get(validateResources(getCommentSchema), getCommentHandler)
+        .put([requireUser, validateResources(updateCommentSchema)], updateCommentHandler)
+        .delete([requireUser, validateResources(deleteCommentSchema)], deleteCommentHandler)
 
 }

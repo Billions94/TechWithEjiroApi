@@ -1,9 +1,11 @@
 import mongoose, { Document } from 'mongoose'
+import { PostDocument } from './post.model'
 import { UserDocument } from './user.model'
 
 
 export interface CommentDocument extends Document {
     user: UserDocument['_id']
+    postId: PostDocument['_id']
     content: string
     image: string
     createdAt: Date
@@ -17,6 +19,10 @@ const CommentSchema = new Schema<CommentDocument>(
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User'
+        },
+        postId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Post'
         },
         content: {
             type: String,

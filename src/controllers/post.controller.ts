@@ -54,9 +54,9 @@ const deletePostHandler: RequestHandler<UpdatePostInput["params"]> = async (req,
 
     if (String(post.user) !== userId) return res.sendStatus(403)
 
-    const commentId = post.comments.find((comment: CommentDocument) => comment.postId === postId) as string
+    const allComments = post.comments.find((comment: CommentDocument) => comment.postId === postId) as string
 
-    await deleteMany({ commentId })
+    await deleteMany({ allComments })
 
     await deletePost({ postId })
 

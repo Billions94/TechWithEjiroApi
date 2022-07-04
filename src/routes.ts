@@ -8,7 +8,7 @@ import validateResources from './middleware/validateResources'
 import { createPostSchema, updatePostSchema, getPostSchema, deletePostSchema } from './schemas/post.schema'
 import { sessionSchema } from './schemas/session.schema'
 import { createUserSchema } from './schemas/user.schema'
-import { createCommentSchema, getCommentSchema } from './schemas/comment.schema'
+import { createCommentSchema, getCommentSchema, updateCommentSchema } from './schemas/comment.schema'
 
 export default function Routes(app: Express) {
 
@@ -40,8 +40,8 @@ export default function Routes(app: Express) {
     app.post("/api/comments/:postId", [requireUser, validateResources(createCommentSchema)], commentHandler.createCommentHandler)
 
     app.route("api/comments/:commentId")
-        .get(validateResources(getCommentSchema), commentHandler.getCommentHandler)
-        // .put([requireUser, validateResources(updateCommentSchema)], updateCommentHandler)
-        // .delete([requireUser, validateResources(deleteCommentSchema)], deleteCommentHandler)
+    
+    app.get("/api/comments/:commentId", commentHandler.getCommentHandler)
+
 
 }

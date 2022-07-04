@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express'
 import { CreateCommentInput, UpdateCommentInput } from '../schemas/comment.schema'
-import { createComment, deleteComment, findAndUpdateComment, findComment } from '../services/comment.service'
+import { createComment, findComment } from '../services/comment.service'
 import { findAndUpdatePost, findPost } from '../services/post.service'
+import log from '../utils/logger'
 
 const createCommentHandler: RequestHandler<{}, {}, CreateCommentInput['body']> = async (req, res) => {
     const userId = res.locals.user._id
     // @ts-ignore
     const postId = req.params.postId
-
     const body = req.body
 
     const post = await findPost({ postId })
@@ -23,30 +23,29 @@ const createCommentHandler: RequestHandler<{}, {}, CreateCommentInput['body']> =
         return res.send(comment)
     }
 }
-const getCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
 
-    const commentId = req.params.commentId
-    console.log({ commentId })
-    const comment = await findComment({ commentId })
+const getCommentHandler: RequestHandler<UpdateCommentInput['params']> = async (req, res) => {
+    try {
+        const commentId = req.params.commentId
 
-    console.log({ comment })
+        const comment = await findComment({ commentId })
 
+        if (comment._id.toString() !== commentId) return res.send({ message: 'Comment not found, check if correct the id is passed in params' })
 
-    if (!comment) return res.sendStatus(404)
-
-    return res.send(comment)
+        res.send({ comment })
+    } catch (error: any) {
+        return {
+            message: error.message
+        }
+    }
 }
 
-export const commentHandler = {
-    createCommentHandler,
-    getCommentHandler
-}
 // export const updateCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
 //     const userId = res.locals.user._id
 
 //     const commentId = req.params.commentId
 //     const update = req.body
-
+//     // @ts-ignore
 //     const comment = await findComment({ commentId })
 
 //     if (!comment) return res.sendStatus(404)
@@ -59,6 +58,13 @@ export const commentHandler = {
 
 //     return res.send(updatedProduct)
 // }
+
+export const commentHandler = {
+    createCommentHandler,
+    getCommentHandler,
+    // updateCommentHandler
+}
+
 // export const deleteCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
 //     const userId = res.locals.user._id
 //     const commentId = req.params.commentId

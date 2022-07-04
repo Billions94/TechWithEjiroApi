@@ -29,3 +29,7 @@ export const findAndUpdatePost = async (query: FilterQuery<PostDocument>, update
 export const deletePost = async (query: FilterQuery<PostDocument>) => {
     return Post.deleteOne(query)
 }
+
+export const deleteManyPosts = async (query: FilterQuery<PostDocument>) => {
+    return Post.deleteMany(query)
+}

@@ -3,7 +3,7 @@ import User, { UserDocument } from '../models/user.model';
 import bcrypt from 'bcrypt'
 
 export const createUser = async (input: DocumentDefinition<Omit<UserDocument,
-    'firstName' | 'lastName' | 'createdAt' | 'updatedAt' | 'refreshToken' | 'post' | 'image'>>) => {
+    'firstName' | 'lastName' | 'createdAt' | 'updatedAt' | 'refreshToken' | 'post' | 'comments' | 'replies' | 'image'>>) => {
     try {
         return await User.create(input)
     } catch (error: any) {
@@ -33,6 +33,8 @@ export const getUsers = async () => {
 export const findUser = async (query: FilterQuery<UserDocument>) => {
     try {
         return await User.findOne(query).lean()
+            .populate({ path: 'posts' })
+            .populate({ path: 'comments' })
     } catch (error: any) {
         throw new Error(error.message)
     }

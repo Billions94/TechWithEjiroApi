@@ -2,6 +2,7 @@ import { RequestHandler } from 'express'
 import { CreateCommentInput, UpdateCommentInput } from '../schemas/comment.schema'
 import { createComment, findAndUpdateComment, findComment, deleteComment } from '../services/comment.service'
 import { findAndUpdatePost, findPost } from '../services/post.service'
+import { updateUser } from '../services/user.service'
 import log from '../utils/logger'
 
 const createCommentHandler: RequestHandler<{}, {}, CreateCommentInput['body']> = async (req, res) => {
@@ -21,6 +22,7 @@ const createCommentHandler: RequestHandler<{}, {}, CreateCommentInput['body']> =
 
         if (comment) {
             await findAndUpdatePost({ postId }, { $push: { comments: comment._id } }, { new: true })
+            await updateUser({ userId }, { $push: { comments: comment._id } }, { new: true })
             return res.status(201).send(comment)
         }
     } catch (error: any) {

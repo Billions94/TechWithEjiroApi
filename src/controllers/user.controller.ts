@@ -1,10 +1,17 @@
 import { RequestHandler } from 'express'
+import { CommentDocument } from '../models/comments.model'
+import { PostDocument } from '../models/post.model'
 import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema'
+import { deleteMany } from '../services/comment.service'
+import { deleteManyPosts } from '../services/post.service'
+import { updateSession } from '../services/session.service'
 import { createUser, deleteUser, findUser, getUsers } from '../services/user.service'
+import log from '../utils/logger'
 import logger from '../utils/logger'
 
-const createUserHandler: RequestHandler = async (req, res) => {
+const createUserHandler: RequestHandler<{}, {}, CreateUserInput['body']> = async (req, res) => {
     try {
+        // @ts-ignore
         const user = await createUser(req.body) // call create user service
         return res.status(201).send({
             message: 'User created successfully',
@@ -49,27 +56,45 @@ const findUserHandler: RequestHandler<UpdateUserInput["params"]> = async (req, r
     }
 }
 
-// const deleteUserHandler: RequestHandler<UpdateUserInput['params']> = async (req, res) => {
-//     try {
-//         const userId = req.params.userId
+const deleteUserHandler: RequestHandler<UpdateUserInput['params']> = async (req, res) => {
+    try {
+        const userId = req.params.userId
 
-//         const user = await findUser({ userId })
+        // const sessionId = res.locals.user.session
 
-//         const allPost = user.posts.find((post: PostDocument) => )
+        const user = await findUser({ userId })
 
-//         await deleteUser({ userId })
+        const allPosts = user?.posts.find((post: PostDocument) => post.user === userId)
+        
+       const allComments = user?.comments.find((comment: CommentDocument) => comment.user === userId)
+        // const allComments = allPost.comments.toString()
 
-//     } catch (error: any) {
-//         logger.error(error)
-//         return res.status(409).send({
-//             message: `Error finding user: ${error.message}`,
-//         })
-//     }
-// }
+
+        await deleteMany({ allComments })
+
+        await deleteManyPosts({ allPosts })
+
+        // await updateSession({ _id: sessionId }, { valid: false })
+
+        await deleteUser({ userId })
+
+
+        return res.send({
+            message: 'User deleted successfully'
+        })
+
+    } catch (error: any) {
+        logger.error(error)
+        return res.status(409).send({
+            message: `Error finding user: ${error.message}`,
+        })
+    }
+}
 
 
 export const userHandler = {
     createUserHandler,
     getUserHandler,
-    findUserHandler
+    findUserHandler,
+    deleteUserHandler,
 }

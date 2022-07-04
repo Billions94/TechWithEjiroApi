@@ -4,7 +4,7 @@ import { verifyJwt } from "../utils/jwt.utils"
 import { reIssueAccessToken } from "../services/session.service"
 
 
-const deserializeUser = async (
+const checkAuthorization = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -18,6 +18,8 @@ const deserializeUser = async (
   }
 
   const { decoded, expired } = verifyJwt(accessToken, "accessTokenPublicKey")
+
+  console.log({ decoded })
 
   if (decoded) {
     res.locals.user = decoded
@@ -40,4 +42,4 @@ const deserializeUser = async (
   return next()
 }
 
-export default deserializeUser
+export default checkAuthorization

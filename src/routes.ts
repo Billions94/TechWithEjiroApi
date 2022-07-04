@@ -19,6 +19,7 @@ export default function Routes(app: Express) {
 
     app.route('/api/users/:userId')
         .get(userHandler.findUserHandler)
+        .delete(userHandler.deleteUserHandler)
 
     // Session Routes
     app.route('/api/sessions')

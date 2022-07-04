@@ -1,6 +1,7 @@
 import mongoose, { Document, Model } from "mongoose"
 import bcrypt from 'bcrypt'
 import { PostDocument } from "./post.model"
+import { CommentDocument } from "./comments.model"
 
 const { Schema, model } = mongoose
 
@@ -13,6 +14,8 @@ export interface UserDocument extends Document {
     password: string
     image: string
     posts: PostDocument['_id']
+    comments: CommentDocument['_id']
+    replies: mongoose.Types.ObjectId
     refreshToken: string
     createdAt: Date
     updatedAt: Date
@@ -58,6 +61,14 @@ const UserSchema = new Schema<UserDocument>(
             type: String,
         },
         posts: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Post'
+        }],
+        comments: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
+        }],
+        replies: [{
             type: Schema.Types.ObjectId,
             ref: 'Post'
         }],

@@ -4,7 +4,7 @@ import { CreatePostInput, UpdatePostInput } from '../schemas/post.schema'
 import { deleteMany } from '../services/comment.service'
 import { createPost, deletePost, findAndUpdatePost, findPost } from '../services/post.service'
 
-export const createPostHandler: RequestHandler<{}, {}, CreatePostInput["body"]> = async (req, res) => {
+const createPostHandler: RequestHandler<{}, {}, CreatePostInput["body"]> = async (req, res) => {
     const userId = res.locals.user._id
     const body = req.body
 
@@ -12,18 +12,18 @@ export const createPostHandler: RequestHandler<{}, {}, CreatePostInput["body"]> 
 
     return res.send(post)
 }
-export const getPostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
+const getPostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
     const postId = req.params.postId
     const post = await findPost({ postId })
 
-    if (!post) return res.send({ message: 'Post not found' })
-   
-    if (post._id.toString() !== postId) return res.send({ message: 'Post not found' })
+    if (!post) return res.send({ message: 'Post not found, check if correct the id is passed in params' })
+
+    if (post._id.toString() !== postId) return res.send({ message: 'Post not found, check if correct the id is passed in params' })
 
     return res.send(post)
 
 }
-export const updatePostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
+const updatePostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
     const userId = res.locals.user._id
     const postId = req.params.postId
     const update = req.body
@@ -32,8 +32,8 @@ export const updatePostHandler: RequestHandler<UpdatePostInput["params"]> = asyn
 
     if (!post) return res.sendStatus(404)
 
-    if (post._id.toString() !== postId) return res.send({ message: 'Post not found' })
- 
+    if (post._id.toString() !== postId) return res.send({ message: 'Post not found, check if correct the id is passed in params' })
+
     if (String(post.user) !== userId) return res.sendStatus(403)
 
     const updatedProduct = await findAndUpdatePost({ postId }, update, {
@@ -42,7 +42,7 @@ export const updatePostHandler: RequestHandler<UpdatePostInput["params"]> = asyn
 
     return res.send(updatedProduct)
 }
-export const deletePostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
+const deletePostHandler: RequestHandler<UpdatePostInput["params"]> = async (req, res) => {
     const userId = res.locals.user._id
     const postId = req.params.postId
 
@@ -50,7 +50,7 @@ export const deletePostHandler: RequestHandler<UpdatePostInput["params"]> = asyn
 
     if (!post) return res.sendStatus(404)
 
-    if (post._id.toString() !== postId) return res.send({ message: 'Post not found' })
+    if (post._id.toString() !== postId) return res.send({ message: 'Post not found, check if correct the id is passed in params' })
 
     if (String(post.user) !== userId) return res.sendStatus(403)
 
@@ -63,4 +63,11 @@ export const deletePostHandler: RequestHandler<UpdatePostInput["params"]> = asyn
     return res.send({
         message: 'Post deleted successfully'
     })
+}
+
+export const postHandler = {
+    createPostHandler,
+    getPostHandler,
+    updatePostHandler,
+    deletePostHandler
 }

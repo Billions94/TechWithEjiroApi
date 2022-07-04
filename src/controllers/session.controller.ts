@@ -8,7 +8,7 @@ dotenv.config();
 import config from "config"
 
 
-export const createUserSessionHandler: RequestHandler = async (req, res) => {
+const createUserSessionHandler: RequestHandler = async (req, res) => {
     const { email, password } = req.body
 
     const user = await validateCredentials(email, password)
@@ -37,7 +37,7 @@ export const createUserSessionHandler: RequestHandler = async (req, res) => {
     return res.send({ accessToken, refreshToken })
 }
 
-export const getUserSessionsHandler: RequestHandler = async (req, res) => {
+const getUserSessionsHandler: RequestHandler = async (req, res) => {
     const userId = res.locals.user._id
 
     console.log({ userId })
@@ -47,7 +47,7 @@ export const getUserSessionsHandler: RequestHandler = async (req, res) => {
     return res.send(sessions)
 }
 
-export const deleteSessionHandler: RequestHandler = async (req, res) => {
+const deleteSessionHandler: RequestHandler = async (req, res) => {
     const sessionId = res.locals.user.session
 
     await updateSession({ _id: sessionId }, { valid: false })
@@ -56,4 +56,10 @@ export const deleteSessionHandler: RequestHandler = async (req, res) => {
         accessToken: null,
         refreshToken: null,
     })
+}
+
+export const sessionHandler = {
+    createUserSessionHandler,
+    getUserSessionsHandler,
+    deleteSessionHandler
 }

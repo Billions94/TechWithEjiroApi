@@ -1,12 +1,11 @@
 import { RequestHandler } from 'express'
 import { CreateCommentInput, UpdateCommentInput } from '../schemas/comment.schema'
-
 import { createComment, deleteComment, findAndUpdateComment, findComment } from '../services/comment.service'
 import { findAndUpdatePost, findPost } from '../services/post.service'
 
-export const createCommentHandler: RequestHandler = async (req, res) => {
+const createCommentHandler: RequestHandler<{}, {}, CreateCommentInput['body']> = async (req, res) => {
     const userId = res.locals.user._id
-
+    // @ts-ignore
     const postId = req.params.postId
 
     const body = req.body
@@ -15,8 +14,7 @@ export const createCommentHandler: RequestHandler = async (req, res) => {
 
     if (!post) return res.send({ message: 'Post not found' })
 
-    if (post._id.toString() !== postId) return res.send({ message: 'Post not found' })
-
+    if (post._id.toString() !== postId) return res.send({ message: 'Post not found, check if correct the id is passed in params' })
 
     const comment = await createComment({ ...body, user: userId, postId: postId })
 
@@ -25,7 +23,7 @@ export const createCommentHandler: RequestHandler = async (req, res) => {
         return res.send(comment)
     }
 }
-export const getCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
+const getCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
 
     const commentId = req.params.commentId
     console.log({ commentId })
@@ -38,37 +36,42 @@ export const getCommentHandler: RequestHandler<UpdateCommentInput["params"]> = a
 
     return res.send(comment)
 }
-export const updateCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
-    const userId = res.locals.user._id
 
-    const commentId = req.params.commentId
-    const update = req.body
-
-    const comment = await findComment({ commentId })
-
-    if (!comment) return res.sendStatus(404)
-
-    if (String(comment.user) !== userId) return res.sendStatus(403)
-
-    const updatedProduct = await findAndUpdateComment({ commentId }, update, {
-        new: true,
-    })
-
-    return res.send(updatedProduct)
+export const commentHandler = {
+    createCommentHandler,
+    getCommentHandler
 }
-export const deleteCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
-    const userId = res.locals.user._id
-    const commentId = req.params.commentId
+// export const updateCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
+//     const userId = res.locals.user._id
 
-    const comment = await findComment({ commentId })
+//     const commentId = req.params.commentId
+//     const update = req.body
 
-    if (!comment) return res.sendStatus(404)
+//     const comment = await findComment({ commentId })
 
-    if (String(comment.user) !== userId) return res.sendStatus(403)
+//     if (!comment) return res.sendStatus(404)
 
-    await deleteComment({ commentId })
+//     if (String(comment.user) !== userId) return res.sendStatus(403)
 
-    return res.send({
-        message: 'Comment deleted successfully'
-    })
-}
+//     const updatedProduct = await findAndUpdateComment({ commentId }, update, {
+//         new: true,
+//     })
+
+//     return res.send(updatedProduct)
+// }
+// export const deleteCommentHandler: RequestHandler<UpdateCommentInput["params"]> = async (req, res) => {
+//     const userId = res.locals.user._id
+//     const commentId = req.params.commentId
+
+//     const comment = await findComment({ commentId })
+
+//     if (!comment) return res.sendStatus(404)
+
+//     if (String(comment.user) !== userId) return res.sendStatus(403)
+
+//     await deleteComment({ commentId })
+
+//     return res.send({
+//         message: 'Comment deleted successfully'
+//     })
+// }

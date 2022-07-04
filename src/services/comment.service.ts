@@ -16,7 +16,7 @@ export const createComment = async (input: DocumentDefinition<Omit<CommentDocume
 export const findComment = async (query: FilterQuery<CommentDocument>, options: QueryOptions = { lean: true }) => {
     try {
         const result = await Comment.findOne(query, {}, options)
-        if (!result) throw new Error(`Error finding post`)
+        if (!result) throw new Error(`Error finding comment`)
         return result
     } catch (error) {
         throw error

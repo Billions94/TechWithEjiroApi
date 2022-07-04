@@ -3,7 +3,7 @@ import { CreateUserInput } from '../schemas/user.schema'
 import { createUser, getUsers } from '../services/user.service'
 import logger from '../utils/logger'
 
-export const createUserHandler: RequestHandler<{}, {}, CreateUserInput['body']> = async (req, res) => {
+const createUserHandler: RequestHandler<{}, {}, CreateUserInput['body']> = async (req, res) => {
     try {
         const user = await createUser(req.body) // call create user service
         return res.status(201).send({
@@ -18,7 +18,7 @@ export const createUserHandler: RequestHandler<{}, {}, CreateUserInput['body']> 
     }
 }
 
-export const getUserHandler: RequestHandler = async (req, res) => {
+const getUserHandler: RequestHandler = async (req, res) => {
     try {
         const users = await getUsers()
         return res.status(200).send({
@@ -30,4 +30,9 @@ export const getUserHandler: RequestHandler = async (req, res) => {
             message: `Error creating user: ${error.message}`,
         })
     }
+}
+
+export const userHandler = {
+    createUserHandler,
+    getUserHandler,
 }
